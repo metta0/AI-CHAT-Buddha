@@ -13,23 +13,53 @@ chat-gpt를 활용하여 가상의 부처님과 대화하는 분이 있다고 �
 ## 1. Install
 
 ### prerequisite
-> * python3
+> * python3.9 이상
 > * streamlit
-> * 구글 클라우드 앱엔진 사용을 위한 gcloud CLI, SDK
+> * openai
+> * gcloud CLI, SDK
 > * google.cloud.secretmanager
 
 ```
 #구글 클라우드 sdk 설치
 https://cloud.google.com/appengine/docs/flexible/setting-up-environment?tab=python&hl=ko
 
+#openAI-API KEY를 비밀키로 저장하기 위하여 google cloud secret manager 사용
+(https://cloud.google.com/secret-manager/docs/creating-and-accessing-secrets?hl=ko)
+
 #라이브러리 설치
-
-
-pip install streamlit
-pip install google-cloud-secret-manager
-
-
-# local DB 세팅
-docker-compose up -d db
-flask init-db  # create SQL로 DB 세팅
+pip install -r requirements.txt
 ```
+#### A. 로컬 배포
+```
+streamlit run app.py
+```
+#### B. 구글 클라우스 배포
+```
+#구글 클라우드 앱엔진 프로젝트 설정 및 앱 배포
+gcloud config set project [PROJECT_ID]
+gcloud app create --region=asia-northeast3
+gcloud app deploy
+gcloud app browse
+```
+
+## 2. 오버뷰
+
+![image](https://github.com/user-attachments/assets/853beb91-a724-46c0-8393-722bffbb12bf)
+
+
+Streamlit에서 chatbot web화면을 제공해주었기 떄문에, 프론트 구성이 편리했다.
+
+로컬배포만이 아니라 remote 서버에 배포까지 해보고 싶어서 Google Cloud Platform을 사용했다.
+
+앱 배포가 바로 가능한 APP ENGINE서비스를 사용했다.
+
+## 3.git commit 메시지 규약
+> * UI
+> * Back
+> * 구현
+> * Deploy
+> * Test
+> * Fix
+> * Chor
+Refactor
+
