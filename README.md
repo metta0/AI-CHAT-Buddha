@@ -53,13 +53,30 @@ Streamlit에서 chatbot web화면을 제공해주었기 떄문에, 프론트 구
 
 앱 배포가 바로 가능한 APP ENGINE서비스를 사용했다.
 
-## 3.git commit 메시지 규약
-> * UI
-> * Back
-> * 구현
-> * Deploy
-> * Test
-> * Fix
-> * Chor
-Refactor
 
+## 3.git commit 메시지 규약
+> * FEAT: 새로운 기능 추가
+> * FIX: 버그 수정
+> * DOCS: 문서 수정
+> * STYLE: 스타일 관련 기능(코드 포맷팅, 세미콜론 누락, 코드 자체의 변경이 없는 경우)
+> * REFACTOR: 코드 리팩토링
+> * TEST: 테스트 코드 추가
+> * CHORE: 빌드 업무 수정, 패키지 매니저 수정(ex .gitignore 수정 같은 경우)
+
+제목을 넘어, 본문 작성 필요시 '어떻게' 변경했는지 보다 '무엇을, 왜' 변경했는지 작성한다.
+
+
+
+## 4. 이슈 및 해결
+
+### 4-1 앱 배포 후, 브라우저 접속 시 무한 wait
+리모트 서버인 Google Cloud Platform 의 앱엔진을 사용하여 앱을 배포하였는데, 브라우저에서 화면이 로드되지 않고 무한 wait 발생. 클라이언트에서 GET 요청 시 'GCP APP 웹소켓 에러' 발생.
+확인해 보니 GCP의 앱 엔진에서 ["표준 환경/가변형 환경"](https://cloud.google.com/appengine/docs/the-appengine-environments?hl=ko) 을 선택해서 앱을 실행하는데, "표준 환경"에서는 WebSocket기능을 사용할 수 없었다. streamlit의 chat기능은 실시간 대화를 제공하므로 HTTP통신이 아닌 WebSocket방식을 사용하고 있었다.
+앱 엔진의 환경을 "가변형 환경"으로 실행하여 문제 해결.
+
+### 4-2 앱 배포 후, OpenAI API KEY 인증 오류
+OpenAI API KEY는 사용 시 과금이 되는 형태로 보안이 필요함. Google Secret manager를 사용하여 비밀키로 설정하고, API를 통해 비밀키 호출하여 사용했음. 그러나 살행 시 오류 발생.
+비밀키를 받아오는 샘플코드(Google Secret Manager에서 제공된)에서 함수의 반환 값이 존재하지 않았음. 함수의 return값 설정 후 문제 해결.
+
+
+## 5. 개선할 점
