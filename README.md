@@ -1,4 +1,5 @@
-# AI-Buddha : AI chat with Buddha based on early Buddhism(초기불교에 근거한 AI 부처님 챗봇)
+# AI-Buddha 
+AI chat with Buddha based on early Buddhism(초기불교에 근거한 AI 부처님 챗봇)
 
 이 프로젝트는 제 관심사와 필요에 따라 진행했습니다.
 
@@ -8,7 +9,10 @@ chat-gpt를 활용하여 가상의 부처님과 대화하는 분이 있다고 �
 
 그래서 좀 더 맞춤 프로폼트를 통해서 초기불교 AI부처님을 만들어봐야겠다고 생각했습니다.
 
-결과적으로는, 초기불교 AI부처님의 대답이 꽤 만족스럽습니다.
+## 0. Preview
+
+![image](https://github.com/user-attachments/assets/08b4d694-7e57-414f-86f7-a2119e5e8114)
+
 
 ## 1. Install
 
@@ -55,13 +59,13 @@ Streamlit에서 chatbot web화면을 제공해주었기 떄문에, 프론트 구
 
 
 ## 3.git commit 메시지 규약
-> * FEAT: 새로운 기능 추가
-> * FIX: 버그 수정
-> * DOCS: 문서 수정
-> * STYLE: 스타일 관련 기능(코드 포맷팅, 세미콜론 누락, 코드 자체의 변경이 없는 경우)
-> * REFACTOR: 코드 리팩토링
-> * TEST: 테스트 코드 추가
-> * CHORE: 빌드 업무 수정, 패키지 매니저 수정(ex .gitignore 수정 같은 경우)
+> * ➕ FEAT: 새로운 기능 추가
+> * ❗ FIX: 버그 수정
+> * 📝 DOCS: 문서 수정
+> * 🎨 STYLE: 스타일 관련 기능(코드 포맷팅, 세미콜론 누락, 코드 자체의 변경이 없는 경우)
+> * ⬆️ REFACTOR: 코드 리팩토링
+> * 🔎 TEST: 테스트 코드 추가
+> * ⚙ CHORE: 빌드 업무 수정, 패키지 매니저 수정(ex .gitignore 수정 같은 경우)
 
 제목을 넘어, 본문 작성 필요시 '어떻게' 변경했는지 보다 '무엇을, 왜' 변경했는지 작성한다.
 
@@ -69,14 +73,24 @@ Streamlit에서 chatbot web화면을 제공해주었기 떄문에, 프론트 구
 
 ## 4. 이슈 및 해결
 
-### 4-1 앱 배포 후, 브라우저 접속 시 무한 wait
+### 4-1. 앱 배포 후, 브라우저 접속 시 무한 wait
 리모트 서버인 Google Cloud Platform 의 앱엔진을 사용하여 앱을 배포하였는데, 브라우저에서 화면이 로드되지 않고 무한 wait 발생. 클라이언트에서 GET 요청 시 'GCP APP 웹소켓 에러' 발생.
-확인해 보니 GCP의 앱 엔진에서 ["표준 환경/가변형 환경"](https://cloud.google.com/appengine/docs/the-appengine-environments?hl=ko) 을 선택해서 앱을 실행하는데, "표준 환경"에서는 WebSocket기능을 사용할 수 없었다. streamlit의 chat기능은 실시간 대화를 제공하므로 HTTP통신이 아닌 WebSocket방식을 사용하고 있었다.
+확인해 보니 GCP의 앱 엔진에서 ["표준 환경/가변형 환경"](https://cloud.google.com/appengine/docs/the-appengine-environments?hl=ko) 을 선택해서 앱을 실행하는데, "표준 환경"에서는 **WebSocket기능**을 사용할 수 없었다. streamlit의 chat기능은 실시간 대화를 제공하므로 HTTP통신이 아닌 WebSocket방식을 사용하고 있었다.
 앱 엔진의 환경을 "가변형 환경"으로 실행하여 문제 해결.
 
-### 4-2 앱 배포 후, OpenAI API KEY 인증 오류
-OpenAI API KEY는 사용 시 과금이 되는 형태로 보안이 필요함. Google Secret manager를 사용하여 비밀키로 설정하고, API를 통해 비밀키 호출하여 사용했음. 그러나 살행 시 오류 발생.
-비밀키를 받아오는 샘플코드(Google Secret Manager에서 제공된)에서 함수의 반환 값이 존재하지 않았음. 함수의 return값 설정 후 문제 해결.
+### 4-2. 프롬포트 노출 문제
+chat GPT에게 AI-부처 역할을 부여하는 프롬포트가 유저에게 보여지는 문제 발생. 세션에 저장되어 있는 모든 메세지를 화면에 로드하기 때문에 발생하였다.
+Message의 role이 "System"일 경우에는 메세지 로드하지 않는 제어로직 추가.
 
 
 ## 5. 개선할 점
+
+### 5-1. Google Cloud Platform APP ENGINE 배포시 시간 지연 
+"가변형 환경"으로 앱 배포시 "표준 환경"으로 배포 시보다 10배 정도 오래걸린다(약 10~20분). 시간을 줄일 수 있는 방법 모색 필요.
+ 
+### 5-2.프롬포트 업데이트
+내가 원하는 스타일의 대답이 나오려면 상세하게 알려주는 것이 필요하다. 불교의 내용이 매우 방대하고, 그 중 초기불교식의 대답을 만들어야하기 때문에, 어떤 경에 근거해서 말해야 하는지와 어떤 개념을 핵심으로 하여 대답하여야 할지 말해주어야 한다.
+대답의 형식도 구성하여 알려주어야 한다. 
+어느정도는 완성되었지만, chat GPT에게 '무상,고,무아'의 지혜를 활용해서 답변을 해달라고 했음에도 디테일이 부족했다. 해당 지혜들이 질문자의 상황에서 어떻게 적용되어 도움이 될지, 스님의 대답보다 와닿지가 않았다.
+스님들의 문답을 더 자세히 듣고, chat GPT에게 요청할 필요가 있다.
+
